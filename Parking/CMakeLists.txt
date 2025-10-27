@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(my_following_line_package_1)
+project(Parking)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
-  std_msgs
   sensor_msgs
   geometry_msgs
-  cv_bridge
-  image_transport
 )
 
 catkin_package()
 
 catkin_install_python(PROGRAMS
-  scripts/line_detector.py
-  scripts/controller.py
+  scripts/auto_parking.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

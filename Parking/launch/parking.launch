@@ -1,0 +1,9 @@
+<launch>
+  <env name="TURTLEBOT3_MODEL" value="$(arg model)"/>
+  <arg name="model" default="burger"/>
+  <node pkg="Parking" type="auto_parking.py" name="auto_parking" output="screen">
+    <param name="target_distance" value="0.25"/>
+    <param name="approach_speed" value="0.08"/>
+    <param name="scan_angle_deg" value="20"/>
+  </node>
+</launch>

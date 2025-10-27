@@ -1,0 +1,21 @@
+<launch>
+  <env name="TURTLEBOT3_MODEL" value="$(arg model)"/>
+  <arg name="model" default="burger"/>
+  <arg name="camera_topic" default="/camera/rgb/image_raw"/>
+  <arg name="display" default="false"/>
+
+  <node pkg="my_following_line_package_1" type="line_detector.py" name="line_detector" output="screen">
+    <param name="camera_topic" value="$(arg camera_topic)"/>
+    <param name="display" value="$(arg display)"/>
+    <param name="hsv_lower" value="[20,80,80]"/>
+    <param name="hsv_upper" value="[35,255,255]"/>
+    <param name="min_area"  value="1500"/>
+  </node>
+
+  <node pkg="my_following_line_package_1" type="controller.py" name="line_controller" output="screen">
+    <param name="kp" value="0.004"/>
+    <param name="ki" value="0.0"/>
+    <param name="kd" value="0.002"/>
+    <param name="lin_speed" value="0.15"/>
+  </node>
+</launch>

@@ -1,19 +1,16 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>my_following_line_package_1</name>
+  <name>Parking</name>
   <version>0.1.0</version>
-  <description>Line following nodes (detector + PID controller) for TurtleBot3 (ROS Melodic)</description>
+  <description>Automatic parking node for TurtleBot3 (ROS Melodic)</description>
   <maintainer email="martin.badrous@gmail.com">Martin Badrous</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>rospy</depend>
-  <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>cv_bridge</depend>
-  <depend>image_transport</depend>
 
   <export/>
 </package>
