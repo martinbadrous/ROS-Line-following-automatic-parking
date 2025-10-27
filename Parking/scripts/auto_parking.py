@@ -9,6 +9,11 @@ Parameters:
   ~approach_speed    (default: 0.08 m/s)
   ~backoff_distance  (default: 0.10 m) optional small backoff after initial contact
   ~scan_angle_deg    (default: 20) front cone half-angle used to compute min distance
+
+Behaviour:
+  1. Approach until the target distance is reached.
+  2. Optionally back off by ``backoff_distance`` to avoid pressing against the obstacle.
+  3. Hold position once parked.
 """
 import rospy
 from sensor_msgs.msg import LaserScan
@@ -24,7 +29,9 @@ class AutoParking(object):
 
         self.cmd_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
         rospy.Subscriber("/scan", LaserScan, self.scan_cb)
+
         self.state = "approach"
+        self.backoff_end = None
 
     def scan_cb(self, msg):
         n = len(msg.ranges)
@@ -35,13 +42,30 @@ class AutoParking(object):
         min_d = min(front) if front else float('inf')
 
         tw = Twist()
+        now = rospy.Time.now()
+
         if self.state == "approach":
             if min_d > self.target:
                 tw.linear.x = self.vx
             else:
                 tw.linear.x = 0.0
-                self.state = "stop"
-        elif self.state == "stop":
+                if self.backoff > 0.0 and self.vx > 0.0:
+                    duration = self.backoff / self.vx
+                    self.backoff_end = now + rospy.Duration(duration)
+                    self.state = "backoff"
+                    rospy.loginfo("auto_parking: target reached, backing off %.2f m", self.backoff)
+                else:
+                    self.state = "parked"
+                    rospy.loginfo("auto_parking: target reached, holding position")
+        elif self.state == "backoff":
+            if self.backoff_end is None or now >= self.backoff_end:
+                tw.linear.x = 0.0
+                self.state = "parked"
+                rospy.loginfo("auto_parking: backoff complete, holding position")
+            else:
+                tw.linear.x = -self.vx
+        else:
+            # "parked" state - keep stopping.
             tw.linear.x = 0.0
 
         self.cmd_pub.publish(tw)
